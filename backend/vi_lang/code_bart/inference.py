@@ -61,7 +61,7 @@ def pipeline(config, src, beam_size):
         beam_size=beam_size,
         prepare_inference=prepare_inference(config),
     ))
-
+    
 __all__ = [
     "prepare_inference",
     "inference",
