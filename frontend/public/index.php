@@ -5,6 +5,8 @@ require_once __DIR__ . '/../vendor/autoload.php';
 define("BASE_URI", "http://localhost:8080");
 define("API_TEXTSUM_VI_LANG", "http://127.0.0.1:8000/vi_lang");
 define("API_TEXTSUM_EN_LANG", "http://127.0.0.1:8000/en_lang");
+define("API_INIT_VI_LANG", "http://127.0.0.1:8000/init_vi_lang");
+define("API_INIT_EN_LANG", "http://127.0.0.1:8000/init_en_lang");
 
 function dd($data) {
     echo '<pre>';
@@ -13,11 +15,9 @@ function dd($data) {
     exit;
 }
 
-function callApi($content, $lang) {
+function callApi($content, $apiUrl) {
     $client = new \GuzzleHttp\Client();
-
     try {
-        $apiUrl = ($lang == 'en') ? API_TEXTSUM_EN_LANG : API_TEXTSUM_VI_LANG;
         $response = $client->post($apiUrl, [
             'json' => ['src' => $content]
         ]);
@@ -29,17 +29,19 @@ function callApi($content, $lang) {
 }
 
 $result = null;
-$lang = 'vi';
+$lang =  "";
 
 if (isset($_GET['en'])) {
     $lang = 'en';
+    callApi('', API_INIT_EN_LANG);
 } elseif (isset($_GET['vi'])) {
     $lang = 'vi';
+    callApi('', API_INIT_VI_LANG);
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $content = $_POST['content'];
-    $result = callApi($content, $lang);
+    $result = callApi($content, $lang == 'en' ? API_TEXTSUM_EN_LANG : API_TEXTSUM_VI_LANG);
 }
 
 ?>
@@ -60,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="#">Ứng dụng tóm tắt văn bản</a>
+            <a class="navbar-brand" href="/">Ứng dụng tóm tắt văn bản</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -78,15 +80,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
     </nav>
 
-    <h2 class="text-center">
-        <?php if ($lang == 'en'): ?>
-            Tóm tắt văn bản tiếng Anh
-        <?php else: ?>
-            Tóm tắt văn bản tiếng Việt
-        <?php endif; ?>
-    </h2>
-
-    <div class="container">
+    <?php if (empty($lang)): ?>
+        <h2 class="text-center">Xin chào!</h2>
+    <?php else: ?>
+        <h2 class="text-center">
+            <?php if ($lang == 'en'): ?>
+                Tóm tắt văn bản tiếng Anh
+            <?php else: ?>
+                Tóm tắt văn bản tiếng Việt
+            <?php endif; ?>
+        </h2>
+    
+        <div class="container">
         <form action="" method="post">
             <div class="mb-4">
                 <label for="content" class="form-label">Nhập văn bản</label>
@@ -104,8 +109,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <p><?php echo nl2br(htmlspecialchars($result['result'])); ?></p>
                 <?php endif; ?>
             </div>
-        <?php endif; ?>
-    </div>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
