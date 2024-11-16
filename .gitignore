@@ -1,3 +1,6 @@
 /backend/vi_lang/bart_models
 /backend/vi_lang/llama_3_models
 /backend/vi_lang/dataset
+
+/backend/en_lang/bart_models
+/backend/en_lang/dataset
