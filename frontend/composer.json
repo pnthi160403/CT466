@@ -1,0 +1,17 @@
+{
+    "name": "pnthi/frontend",
+    "autoload": {
+        "psr-4": {
+            "Pnthi\\Frontend\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Pham Ngoc Thi",
+            "email": "pnthi.it.cp@gmail.com"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^7.9"
+    }
+}
