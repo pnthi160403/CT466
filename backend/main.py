@@ -12,6 +12,10 @@ app = FastAPI()
 #==============================================================================
 BASE_PATH = os.getcwd()
 # default vi lang
+NUM_GROUPS_SEARCH = 4
+DIVERSITY_STRENGTH_SEARCH = 0.5
+DIVERSITY_DISCOUNT_SEARCH = 0
+BEAMS = [12]
 CONFIG_PATH = f"{BASE_PATH}/en_lang/bart_models/model_2/config/config_0000354980.json"
 MODEL_PATH = f"{BASE_PATH}/en_lang/bart_models/model_2/model"
 TOKENIZER_PATH = f"{BASE_PATH}/en_lang/dataset/tokenizer.json"
@@ -56,6 +60,9 @@ async def init_vi_lang(request: Request):
     with open(CONFIG_PATH) as f:
         config = json.load(f)
         config = set_config(config)
+    
+    del prepare_inference_model    
+        
     prepare_inference_model = prepare_inference(config)
     return {"message": "ViLang model is initialized successfully", "config": config}
 
@@ -68,6 +75,14 @@ async def init_en_lang(request: Request):
     with open(CONFIG_PATH) as f:
         config = json.load(f)
         config = set_config(config)
+
+    # params search algo
+    # config["num_groups_search"] = NUM_GROUPS_SEARCH
+    # config["diversity_strength_search"] = DIVERSITY_STRENGTH_SEARCH
+    # config["beams"] = BEAMS
+    
+    del prepare_inference_model
+
     prepare_inference_model = prepare_inference(config)
     return {"message": "EnLang model is initialized successfully", "config": config}
 
